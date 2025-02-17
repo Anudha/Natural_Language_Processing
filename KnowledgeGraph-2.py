@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 def create_sample_graph():
     """Creates a simple directed graph with labeled nodes and edges."""
     G = nx.DiGraph()
-    edges = [
-        ("AI", "Machine Learning"),
+    edges = [  # in this case edges can be based on noun extraction (POS)
+        ("AI", "Machine Learning"),  # each two-pair defines an edge 
         ("Machine Learning", "Deep Learning"),
         ("Deep Learning", "Neural Networks"),
         ("AI", "Computer Vision"),
@@ -23,6 +23,9 @@ def visualize_graph(G):
     pos = nx.spring_layout(G, seed=42)  # Positions for nodes
     nx.draw(G, pos, with_labels=True, node_color="lightblue", edge_color="gray", node_size=3000, font_size=10, arrows=True)
     plt.title("Knowledge Graph")
+    plt.savefig("knowledge_graph.svg", format="svg", bbox_inches="tight")
+    plt.savefig("knowledge_graph.pdf", format="pdf", bbox_inches="tight")
+    plt.savefig("knowledge_graph.eps", format="eps", bbox_inches="tight")
     plt.show()
 
 def graph_info(G):
