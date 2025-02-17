@@ -35,7 +35,7 @@ def calculate_prometheus_score(reference, response, threshold=0.7):
     return round(prometheus_score, 4), similarity_score
 
 # Example chatbot response evaluation
-reference_response = "The capital of France is Paris."
+reference_response = "The capital of France is Paris."  # What if there is no reference response?
 chatbot_response = "Paris is the capital of France."
 
 # Compute evaluation scores
