@@ -1,0 +1,53 @@
+pip install faiss-cpu transformers langchain openai  # install libraries
+
+from langchain.chat_models import ChatOpenAI
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+from langchain.chains import RetrievalQA
+from langchain.document_loaders import TextLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.memory import ConversationBufferMemory
+import os
+
+# Set up OpenAI API Key
+os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
+
+# Load GPT-4
+llm = ChatOpenAI(model_name="gpt-4", temperature=0)  # create an instance of LLM, a next-token generator 
+
+
+# Load text from file
+with open("api_docs.txt", "r") as f:   # this is the text file containing new information
+    text = f.read()
+
+# Split text into smaller chunks for retrieval
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)  # splitting with some overlap 
+documents = text_splitter.create_documents([text])
+
+
+# Convert text chunks to vector embeddings
+embedding_model = OpenAIEmbeddings()  # which embedding model is this?  can be replaced with LABSE, SONAR  
+
+# Store embeddings in FAISS for retrieval
+vector_store = FAISS.from_documents(documents, embedding_model)
+# Set up a retrieval-based QA chain
+qa_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    retriever=vector_store.as_retriever(),
+    memory=ConversationBufferMemory(memory_key="chat_history")
+)
+
+# Function to get AI response using RAG
+def ask_rag(question):
+    response = qa_chain.run(question)
+    return response
+
+# Example Query
+query = "What are the latest API rate limits for cloud storage?"
+response = ask_rag(query)
+
+print("\n💬 AI Response with RAG:\n", response)
+
+
+
+
